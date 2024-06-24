@@ -1,5 +1,5 @@
 function refreshWeather(response) {
-  console.log("Weather data", response.data);
+  console.log("Weather data:", response.data); // Debugging line
 
   let temperatureElement = document.querySelector("#temperature");
   let temperature = response.data.temperature.current;
@@ -15,7 +15,7 @@ function refreshWeather(response) {
   timeElement.innerHTML = formatDate(date);
   descriptionElement.innerHTML = response.data.condition.description;
   humidityElement.innerHTML = `${response.data.temperature.humidity}%`;
-  windSpeedElement.innerHTML = `${response.data.wind.speed}km/h`;
+  windSpeedElement.innerHTML = `${response.data.wind.speed} km/h`;
   temperatureElement.innerHTML = Math.round(temperature);
   iconElement.innerHTML = `<img src="${response.data.condition.icon_url}" class="weather-app-icon" />`;
 
@@ -46,6 +46,7 @@ function formatDate(date) {
 function searchCity(city) {
   let apiKey = "208923ot246cf9a44e16fa303a8c757b";
   let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=metric`;
+  console.log("Fetching weather data for:", city); // Debugging line
   axios
     .get(apiUrl)
     .then(refreshWeather)
@@ -57,6 +58,7 @@ function searchCity(city) {
 function handleSearchSubmit(event) {
   event.preventDefault();
   let searchInput = document.querySelector("#search-form-input");
+  console.log("Searching for:", searchInput.value); // Debugging line
 
   searchCity(searchInput.value);
 }
@@ -71,6 +73,7 @@ function formatDay(timestamp) {
 function getForecast(city) {
   let apiKey = "208923ot246cf9a44e16fa303a8c757b";
   let apiUrl = `https://api.shecodes.io/weather/v1/forecast?query=${city}&key=${apiKey}&units=metric`;
+  console.log("Fetching forecast data for:", city); // Debugging line
   axios
     .get(apiUrl)
     .then(displayForecast)
@@ -80,32 +83,35 @@ function getForecast(city) {
 }
 
 function displayForecast(response) {
+  console.log("Forecast data:", response.data); // Debugging line
+
   let forecastElement = document.querySelector("#forecast");
 
-  forecastHtml = "";
+  let forecastHtml = "";
 
   response.data.daily.forEach(function (day, index) {
     if (index < 5) {
       forecastHtml += `
-            <div class="weather-forecast-day">
-            <div class="weather-forecast-date">${formatDay(day.time)}</div>
-            <div>
+        <div class="weather-forecast-day">
+          <div class="weather-forecast-date">${formatDay(day.time)}</div>
+          <div>
             <img src="${day.condition.icon_url}" class="weather-forecast-icon"/>
+          </div>
+          <div class="weather-forecast-temperatures">
+            <div class="weather-forecast-temperature">
+              <strong>${Math.round(day.temperature.maximum)}°</strong>
             </div>
-            <div class="weather-forecast-temperatures">
-              <div class="weather-forecast-temperature">
-                <strong>${Math.round(day.temperature.maximum)}°</strong>
-              </div>
-              <div class="weather-forecast-temperature">${Math.round(
-                day.temperature.minimum
-              )}°</div>
-            </div>
-          </div>`;
+            <div class="weather-forecast-temperature">${Math.round(
+              day.temperature.minimum
+            )}°</div>
+          </div>
+        </div>`;
     }
   });
 
   forecastElement.innerHTML = forecastHtml;
 }
+
 let searchFormElement = document.querySelector("#search-form");
 searchFormElement.addEventListener("submit", handleSearchSubmit);
 
