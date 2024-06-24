@@ -63,7 +63,8 @@ function formatDay(timestamp) {
 function getForecast(city) {
   let apiKey = "208923ot246cf9a44e16fa303a8c757b";
   let apiUrl = `https://api.shecodes.io/weather/v1/forecast?query=${city}&key=${apiKey}&units=metric`;
-  axios(apiUrl)
+  axios
+    .get(apiUrl)
     .then(displayForecast)
     .catch((error) => {
       console.error("Error fetching forecast data:", error);
@@ -77,9 +78,7 @@ function displayForecast(response) {
 
   response.data.daily.forEach(function (day, index) {
     if (index < 5) {
-      forecastHtml =
-        forecastHtml +
-        `
+      forecastHtml += `
             <div class="weather-forecast-day">
             <div class="weather-forecast-date">${formatDay(day.time)}</div>
             <div>
